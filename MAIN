@@ -1,0 +1,11 @@
+class Main {
+
+    public static void main(String[] args) {
+
+        Database DB = new Database();
+        System.out.println(DB.spausdinti());
+        DB.insert("Mantas","Gerulis","Kalno g 50 Kaunas","gerulism@gmail.com");
+        System.out.println(DB.surasti("vartotojas"));
+
+    }
+}
