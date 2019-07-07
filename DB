@@ -1,0 +1,101 @@
+import org.apache.commons.dbcp.BasicDataSource;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
+
+public class Database {
+
+    private BasicDataSource dataSource;
+
+    public Database() {
+
+        dataSource = new BasicDataSource();
+        dataSource.setDriverClassName("com.mysql.jdbc.Driver");
+        dataSource.setUsername("root");
+        dataSource.setPassword("");
+        dataSource.setUrl("jdbc:mysql://localhost:3306/vartotojai");
+        dataSource.setValidationQuery("SELECT 1");
+
+    }
+
+    public String spausdinti() {
+
+        String query = "SELECT * FROM vartotojas";
+        String turinys = "";
+
+        try(Connection con = dataSource.getConnection())
+        {
+
+            PreparedStatement st = con.prepareStatement(query);
+            ResultSet rs = st.executeQuery();
+
+            while (rs.next())
+            {
+                int id = rs.getInt("id");
+                String vardas = rs.getString("vardas");
+                String pavarde = rs.getString("pavarde");
+                String adresas = rs.getString("adresas");
+                String pastas = rs.getString("el_pastas");
+
+                turinys = turinys + ("ID - " + id + " Vardas - " + vardas + " Pavarde - " + pavarde +
+                        " Adresas - " + adresas + "  Email -  " + pastas + " <br>");
+
+
+            }
+        } catch (SQLException e)
+        {
+            e.printStackTrace();
+        }
+
+        return turinys;
+    }
+
+    public void insert(String vardas, String pavarde, String adresas, String mail) {
+
+        String query = "INSERT INTO vartotojas(vardas, pavarde, adresas, mail)" +
+                "VALUES (?, ?, ?, ?)";
+
+        try (Connection con = dataSource.getConnection();
+
+             PreparedStatement st = con.prepareStatement(query)){
+
+            st.setString(1,vardas);
+            st.setString(2,pavarde);
+            st.setString(3,adresas);
+            st.setString(4,mail);
+            st.executeUpdate();
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+
+    }
+
+    public List<String> surasti(String tableName) {
+
+        List<String> turinys = new ArrayList<>();
+        String query = "SELECT * FROM " + tableName;
+        String turinys1 = "";
+
+        try (Connection con = dataSource.getConnection();
+             PreparedStatement st = con.prepareStatement(query);
+             ResultSet rs = st.executeQuery()) {
+
+            while(rs.next()) {
+
+                turinys1 = " Vardas " + rs.getString("vardas") +
+                        " Pavarde " + rs.getString("pavarde") +
+                        " Mail " + rs.getString("el_pastas");
+
+                turinys.add(turinys1);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return turinys;
+    }
+
+}
